@@ -136,7 +136,34 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
-
+ static u32 u32counter=0;
+ static u32 t1=1;
+ static u32 t2=0;
+ static u32 i=1;
+ u32counter++;
+ if(u32counter==t1)
+ {
+   HEARTBEAT_ON();
+ }
+ if(u32counter==10)
+ {
+   HEARTBEAT_OFF();
+   u32counter=0;
+   t2++;
+ }
+ if(t2==10)
+ {
+   t1=t1+i;
+   t2=0;
+ }
+ if(t1==10)
+ {
+   i=-1;
+ }
+ if(t1==1)
+ {
+   i=1;
+ }
 } /* end UserApp1SM_Idle() */
     
 
