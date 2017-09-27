@@ -136,7 +136,50 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
-
+ static u32 u32counter=0;
+ static bool blighton=FALSE;
+ static u32 COMTER_LIMIT_MS=10;
+ static u32 u32count=0; 
+ static u32 u32count2=0;
+ u32counter++;   
+  if(COMTER_LIMIT_MS<2000)
+ {
+ if(u32counter == COMTER_LIMIT_MS)
+ {
+   u32counter=0;
+   if(blighton)
+   {
+     HEARTBEAT_OFF();
+     blighton=FALSE;
+   }
+   else
+   {
+    HEARTBEAT_ON();
+    blighton=TRUE;
+   }
+   if(u32count==2000)
+   {
+     u32count=0;
+     COMTER_LIMIT_MS=COMTER_LIMIT_MS*2;
+   }
+   else
+   {
+     if(u32count2==2000)
+     {
+       u32count=u32count+500;
+     }
+     else
+     {
+       u32count=u32count+100;
+     }
+   }
+   }
+   
+ }
+ else
+ {
+   COMTER_LIMIT_MS=2000;
+ }
 } /* end UserApp1SM_Idle() */
     
 
