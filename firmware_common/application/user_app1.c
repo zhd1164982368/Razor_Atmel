@@ -87,6 +87,17 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
+  LedPWM(WHITE, LED_PWM_100);
+  LedPWM(PURPLE, LED_PWM_70);
+  LedPWM(BLUE, LED_PWM_50);
+  LedPWM(CYAN, LED_PWM_30);
+  LedPWM(GREEN, LED_PWM_20);
+  LedPWM(YELLOW, LED_PWM_15);
+  LedPWM(ORANGE, LED_PWM_10);
+  LedPWM(RED, LED_PWM_5);
+  LedPWM(LCD_RED, LED_PWM_100);
+  LedPWM(LCD_GREEN, LED_PWM_100);
+  LedPWM(LCD_BLUE, LED_PWM_100);
  
   /* If good initialization, set state to Idle */
   if( 1 )
@@ -136,7 +147,150 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
-
+  static u16 u16counter=3601;
+  static u16 u16lcdcounter=0;
+  u16counter--;
+  if(u16counter>0)
+  {
+  if(u16counter==3600)
+  {
+    
+  LedOn(WHITE);
+  LedOff(PURPLE);
+  LedOff(BLUE);
+  LedOff(CYAN);
+  LedOff(GREEN);
+  LedOff(YELLOW);
+  LedOff(ORANGE);
+  LedOff(RED);
+  }
+  if(u16counter==2800)
+  {
+    LedOff(WHITE);
+    LedOn(PURPLE);
+    LedOff(BLUE);
+    LedOff(CYAN);
+    LedOff(GREEN);
+    LedOff(YELLOW);
+    LedOff(ORANGE);
+    LedOff(RED);
+  }
+  if(u16counter==2100)
+  {
+    LedOff(WHITE);
+    LedOff(PURPLE);
+    LedOn(BLUE);
+    LedOff(CYAN);
+    LedOff(GREEN);
+    LedOff(YELLOW);
+    LedOff(ORANGE);
+    LedOff(RED);
+  }
+  if(u16counter==1500)
+  {
+    LedOff(WHITE);
+    LedOff(PURPLE);
+    LedOff(BLUE);
+    LedOn(CYAN);
+    LedOff(GREEN);
+    LedOff(YELLOW);
+    LedOff(ORANGE);
+    LedOff(RED);
+  }
+  if(u16counter==1000)
+  {
+    LedOff(WHITE);
+    LedOff(PURPLE);
+    LedOff(BLUE);
+    LedOff(CYAN);
+    LedOn(GREEN);
+    LedOff(YELLOW);
+    LedOff(ORANGE);
+    LedOff(RED);   
+  }
+  if(u16counter==600)
+  {
+    LedOff(WHITE);
+    LedOff(PURPLE);
+    LedOff(BLUE);
+    LedOff(CYAN);
+    LedOff(GREEN);
+    LedOn(YELLOW);
+    LedOff(ORANGE);
+    LedOff(RED);
+  }
+  if(u16counter==300)
+  {
+    LedOff(WHITE);
+    LedOff(PURPLE);
+    LedOff(BLUE);
+    LedOff(CYAN);
+    LedOff(GREEN);
+    LedOff(YELLOW);
+    LedOn(ORANGE);
+    LedOff(RED);
+  }
+  if(u16counter==100)
+  {
+    LedOff(WHITE);
+    LedOff(PURPLE);
+    LedOff(BLUE);
+    LedOff(CYAN);
+    LedOff(GREEN);
+    LedOff(YELLOW);
+    LedOff(ORANGE);
+    LedOn(RED);
+    u16lcdcounter++;
+    switch(u16lcdcounter)
+    {
+    case 0:
+      LedOff(LCD_RED);
+      LedOff(LCD_GREEN);
+      LedOff(LCD_BLUE); 
+    break;
+    case 1:
+      LedOn(LCD_RED);
+      LedOff(LCD_GREEN);
+      LedOff(LCD_BLUE);
+      break;
+    case 2:
+      LedOff(LCD_RED);
+      LedOn(LCD_GREEN);
+      LedOff(LCD_BLUE); 
+     break;
+    case 3:
+      LedOff(LCD_RED);
+      LedOff(LCD_GREEN);
+      LedOn(LCD_BLUE); 
+     break;
+    case 4:
+      LedOn(LCD_RED);
+      LedOn(LCD_GREEN);
+      LedOff(LCD_BLUE); 
+     break;
+    case 5:
+      LedOn(LCD_RED);
+      LedOff(LCD_GREEN);
+      LedOn(LCD_BLUE); 
+     break;
+    case 6:
+      LedOff(LCD_RED);
+      LedOn(LCD_GREEN);
+      LedOn(LCD_BLUE); 
+     break;
+    }
+    }
+    if(u16lcdcounter==6)
+    {
+      u16lcdcounter=0;
+    }
+  }
+    
+  
+else
+  {
+    u16counter=3601;
+  } 
 } /* end UserApp1SM_Idle() */
     
 
