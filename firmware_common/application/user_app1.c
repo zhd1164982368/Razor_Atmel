@@ -87,6 +87,14 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
+  LedOff(WHITE);
+  LedOff(PURPLE);
+  LedOff(BLUE);
+  LedOff(CYAN);
+  LedOff(GREEN);
+  LedOff(YELLOW);
+  LedOff(ORANGE);
+  LedOn(RED);
  
   /* If good initialization, set state to Idle */
   if( 1 )
@@ -136,6 +144,115 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
+  static u8 u8Password[]={1,2,3,1,2,3,1,2,3,1};
+  static u8 u8Input[10];
+  static u8 u8PasswordIndex=0;
+  static u8 u8InputIndex=0;
+  static bool bLock=TRUE;
+  static bool bGreenblink=FALSE;
+    
+  if(bLock==TRUE)
+  {
+  if(u8InputIndex<=9)
+  {
+    if(WasButtonPressed(BUTTON0))
+    {
+      ButtonAcknowledge(BUTTON0);
+      u8Input[u8InputIndex]=1;
+      u8InputIndex++;
+    }
+    if(WasButtonPressed(BUTTON1))
+    {
+      ButtonAcknowledge(BUTTON1);
+      u8Input[u8InputIndex]=2;
+      u8InputIndex++;
+    }
+    if(WasButtonPressed(BUTTON2))
+    {
+      ButtonAcknowledge(BUTTON2);
+      u8Input[u8InputIndex]=3;
+      u8InputIndex++;
+    }
+  }
+  }
+ /****************************************/
+  if(WasButtonPressed(BUTTON3))
+  {
+    ButtonAcknowledge(BUTTON3);
+      LedOff(RED);
+      bLock=FALSE;
+      for(u8InputIndex=0;u8InputIndex<=9;u8InputIndex++)
+      {
+          if(u8Password[u8PasswordIndex]==u8Input[u8InputIndex])
+          {
+            u8PasswordIndex++;
+
+          }
+          else
+          {
+              LedBlink(RED,LED_4HZ);
+          }
+      } 
+            if(u8PasswordIndex==10)
+            {
+              LedBlink(GREEN,LED_4HZ);
+              bGreenblink=TRUE;
+            }
+  }
+  /***********************************************************/
+   if(bLock==FALSE)
+      {
+      if(WasButtonPressed(BUTTON3))
+      {
+        ButtonAcknowledge(BUTTON3);
+        LedOn(RED);
+        LedOff(GREEN);
+        bLock=TRUE;
+        for(u8InputIndex=0;u8InputIndex<10;u8InputIndex++)
+        {
+          u8Input[u8InputIndex]=0;
+        }
+      }
+      }
+  /************************************************/
+  if(bGreenblink==TRUE)
+  {
+          if(IsButtonHeld(BUTTON3,1000))
+          {
+            LedBlink(RED,LED_2HZ);
+            LedBlink(GREEN,LED_2HZ);
+            u8PasswordIndex=0;
+            u8InputIndex=0;
+          }
+          if(u8PasswordIndex<=9)
+          {
+            if(WasButtonPressed(BUTTON0))
+            {
+              ButtonAcknowledge(BUTTON0);
+              u8Password[u8PasswordIndex]=1;
+              u8PasswordIndex++;
+            }
+            if(WasButtonPressed(BUTTON1))
+            {
+              ButtonAcknowledge(BUTTON1);
+              u8Password[u8PasswordIndex]=2;
+              u8PasswordIndex++;
+            }
+            if(WasButtonPressed(BUTTON2))
+            {
+              ButtonAcknowledge(BUTTON2);
+              u8Password[u8PasswordIndex]=3;
+              u8PasswordIndex++;
+            }
+          }
+          
+          if(IsButtonPressed(BUTTON3))
+          {
+              LedOn(RED);
+              LedOff(GREEN);
+              bLock=TRUE;
+          }
+  }
 
 } /* end UserApp1SM_Idle() */
     
