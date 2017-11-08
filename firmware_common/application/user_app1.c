@@ -137,6 +137,46 @@ State Machine Function Definitions
 static void UserApp1SM_Idle(void)
 {
 
+  extern u8 G_au8DebugScanfBuffer;
+  extern u8 G_u8DebugScanfCharCount;
+  static u8 au8UserInputBuffer[5];
+  static u8 u8String[30];
+  static u8 u8String1[]={'Z','H','D'};
+  static u8 u8String2[]="*";
+  static u8 u8index,u8int;
+  static u8 u8count=0;
+  
+  if(G_u8DebugScanfCharCount>0)
+  {
+    DebugScanf(au8UserInputBuffer);
+    u8String[u8index]=au8UserInputBuffer[0];
+    u8index++;
+    if(u8index>=3)
+    {
+    if((u8String[u8index-3]==u8String1[0])&&
+       (u8String[u8index-2]==u8String1[1])&&
+       (u8String[u8index-1]==u8String1[2]))
+    {
+      u8count++;
+      u8int=u8count/10;
+      DebugLineFeed();
+      for(u8 i=0;i<=u8int+2;i++)
+      {
+      DebugPrintf(u8String2);
+      }
+      DebugLineFeed();
+      DebugPrintf(u8String2);
+      DebugPrintNumber(u8count);
+      DebugPrintf(u8String2);
+      DebugLineFeed();
+      for(u8 i=0;i<=u8int+2;i++)
+      {
+      DebugPrintf(u8String2);
+      }
+      DebugLineFeed();
+    }
+    }
+  }
 } /* end UserApp1SM_Idle() */
     
 
