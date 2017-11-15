@@ -87,7 +87,18 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
- 
+  LCDCommand(LCD_CLEAR_CMD);
+  LCDMessage(LINE1_START_ADDR, "B1-Debug B3-Return");
+  LCDMessage(LINE2_START_ADDR, "B2-Name(B0-L B1-R)");
+  PWMAudioSetFrequency(BUZZER1, 1000);
+  LedOff(WHITE);
+  LedOff(PURPLE);
+  LedOff(BLUE);
+  LedOff(CYAN);
+  LedOff(GREEN);
+  LedOff(YELLOW);
+  LedOff(ORANGE);
+  LedOff(RED);
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -136,7 +147,283 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
-
+  extern u8 G_au8DebugScanfBuffer;
+  extern u8 G_u8DebugScanfCharCount;
+  static u8 au8UserInputBuffer[5];
+  static u8 u8String[40];
+  static u8 u8String1[20];
+  static u8 u8count=0;
+  static u8 u8count1=0;
+  static u8 u8count2=3;
+  static u8 u8index=0;
+  static u8 u8index1=0;
+  static u8 au8Message[]="Zong";
+  static bool Name=FALSE;
+  static bool Input=FALSE;
+  static bool Enter=FALSE;
+  
+/********************************
+          B1-DEBUG
+********************************/
+  if(Name==FALSE)
+  {
+    if(WasButtonPressed(BUTTON1))
+    {
+      ButtonAcknowledge(BUTTON1);
+      LCDCommand(LCD_CLEAR_CMD);
+      Input=TRUE;
+    }
+  }
+  if(Input==TRUE)
+  {
+    if(G_u8DebugScanfCharCount>0)
+    {
+      DebugScanf(au8UserInputBuffer);
+      if(Enter==FALSE)
+      {
+        u8String[u8index]=au8UserInputBuffer[0];
+        u8index++;
+        LCDMessage(LINE1_START_ADDR, u8String);
+        LCDMessage(LINE1_START_ADDR+20, u8String);
+        if(u8index==40)
+        {
+          for(u8index=1;u8index<=39;u8index++)
+          {
+            u8String[u8index-1]=u8String[u8index];
+          }
+          u8index=39;
+        }
+      }
+/*******************************/
+      if(u8String[u8index-1]==0x0D)
+      {
+        Enter=TRUE;
+      }
+      if(Enter==TRUE)
+      {
+        if(au8UserInputBuffer[0]!=0x0D)
+        {
+          u8String1[u8index1]=au8UserInputBuffer[0];
+          u8index1++;
+          LCDMessage(LINE2_START_ADDR, u8String1);
+          if(u8index1==20)
+          {
+            for(u8index1=1;u8index1<=19;u8index1++)
+            {
+              u8String1[u8index1-1]=u8String1[u8index1];
+            }
+            u8index1=19;
+          }
+        }
+      }
+    }
+  }
+/********************************
+          B2-MOVE NAME
+********************************/
+  if(WasButtonPressed(BUTTON2))
+  {
+    ButtonAcknowledge(BUTTON2);
+    LCDCommand(LCD_CLEAR_CMD);
+    LCDMessage(LINE1_START_ADDR, au8Message);
+    Name=TRUE;
+    u8count=0;
+  }
+/*******  MOVE LEFT  *********/
+  if(Name==TRUE)
+  {
+    if(WasButtonPressed(BUTTON0))
+    {
+      ButtonAcknowledge(BUTTON0);
+      u8count--;
+      u8count2--;
+      if(u8count2==0)
+      {
+        LedOn(WHITE);
+        LedOn(PURPLE);
+        LedOff(BLUE);
+        LedOff(CYAN);
+        LedOff(GREEN);
+        LedOff(YELLOW);
+        LedOff(ORANGE);
+        LedOff(RED);
+        PWMAudioSetFrequency(BUZZER2, 1300);
+        PWMAudioOn(BUZZER2);
+        u8count2=3;
+      }
+      if(u8count2==1)
+      {
+        LedOff(WHITE);
+        LedOff(PURPLE);
+        LedOn(BLUE);
+        LedOn(CYAN);
+        LedOff(GREEN);
+        LedOff(YELLOW);
+        LedOff(ORANGE);
+        LedOff(RED);
+        PWMAudioSetFrequency(BUZZER2, 1600);
+        PWMAudioOn(BUZZER2);
+      }
+      if(u8count2==2)
+      {
+        LedOff(WHITE);
+        LedOff(PURPLE);
+        LedOff(BLUE);
+        LedOff(CYAN);
+        LedOn(GREEN);
+        LedOn(YELLOW);
+        LedOff(ORANGE);
+        LedOff(RED);
+        PWMAudioSetFrequency(BUZZER2, 1900);
+        PWMAudioOn(BUZZER2);
+      }
+      if(u8count<17)
+      {
+        LCDCommand(LCD_CLEAR_CMD);
+        LCDMessage(LINE1_START_ADDR+u8count, au8Message);
+      }
+      if(u8count>=17&&u8count<20)
+      {
+        LedOff(WHITE);
+        LedOff(PURPLE);
+        LedOff(BLUE);
+        LedOff(CYAN);
+        LedOff(GREEN);
+        LedOff(YELLOW);
+        LedOn(ORANGE);
+        LedOff(RED);
+        LCDCommand(LCD_CLEAR_CMD);
+        LCDMessage(LINE1_START_ADDR+u8count, au8Message);
+        LCDMessage(LINE1_START_ADDR+u8count+20, au8Message);
+      }
+      if(u8count>=20)
+      {
+        if(u8count<36)
+        {
+          LCDCommand(LCD_CLEAR_CMD);
+          LCDMessage(LINE2_START_ADDR+u8count-20, au8Message);
+        }
+        else
+        {
+          u8count=35;
+          LCDCommand(LCD_CLEAR_CMD);
+          LCDMessage(LINE2_START_ADDR+u8count-20, au8Message);
+          PWMAudioOff(BUZZER1);
+        }
+      }
+    }
+/*******  MOVE RIGHT  *******/
+    if(WasButtonPressed(BUTTON1))
+    {
+      ButtonAcknowledge(BUTTON1);
+      u8count++;
+      u8count1++;
+      if(u8count1==1)
+      {
+        LedOn(WHITE);
+        LedOn(PURPLE);
+        LedOff(BLUE);
+        LedOff(CYAN);
+        LedOff(GREEN);
+        LedOff(YELLOW);
+        LedOff(ORANGE);
+        LedOff(RED);
+        PWMAudioSetFrequency(BUZZER2, 700);
+        PWMAudioOn(BUZZER2);
+      }
+      if(u8count1==2)
+      {
+        LedOff(WHITE);
+        LedOff(PURPLE);
+        LedOn(BLUE);
+        LedOn(CYAN);
+        LedOff(GREEN);
+        LedOff(YELLOW);
+        LedOff(ORANGE);
+        LedOff(RED);
+        PWMAudioSetFrequency(BUZZER2, 1000);
+        PWMAudioOn(BUZZER2);
+      }
+      if(u8count1==3)
+      {
+        LedOff(WHITE);
+        LedOff(PURPLE);
+        LedOff(BLUE);
+        LedOff(CYAN);
+        LedOn(GREEN);
+        LedOn(YELLOW);
+        LedOff(ORANGE);
+        LedOff(RED);
+        PWMAudioSetFrequency(BUZZER2, 1300);
+        PWMAudioOn(BUZZER2);
+        u8count1=0;
+      }
+      if(u8count<17)
+      {
+        LCDCommand(LCD_CLEAR_CMD);
+        LCDMessage(LINE1_START_ADDR+u8count, au8Message);
+      }
+      if(u8count>=17&&u8count<20)
+      {
+        LedOff(WHITE);
+        LedOff(PURPLE);
+        LedOff(BLUE);
+        LedOff(CYAN);
+        LedOff(GREEN);
+        LedOff(YELLOW);
+        LedOn(ORANGE);
+        LedOff(RED);
+        LCDCommand(LCD_CLEAR_CMD);
+        LCDMessage(LINE1_START_ADDR+u8count, au8Message);
+        LCDMessage(LINE1_START_ADDR+u8count+20, au8Message);
+      }
+      if(u8count>=20&&u8count<37)
+      {
+          LCDCommand(LCD_CLEAR_CMD);
+          LCDMessage(LINE2_START_ADDR+u8count-20, au8Message);
+      }
+      if(u8count>=37)
+      {
+        LCDMessage(LINE2_START_ADDR+16, au8Message);
+        PWMAudioOn(BUZZER1);
+        LedBlink(RED, LED_8HZ);
+        LedOff(WHITE);
+        LedOff(PURPLE);
+        LedOff(BLUE);
+        LedOff(CYAN);
+        LedOff(GREEN);
+        LedOff(YELLOW);
+        LedOff(ORANGE);
+      }
+    }
+  }
+/********************************   
+            B3-RETURN   
+********************************/
+  if(WasButtonPressed(BUTTON3))
+  {
+    ButtonAcknowledge(BUTTON3);
+    LCDCommand(LCD_CLEAR_CMD);
+    LCDMessage(LINE1_START_ADDR, "B1-Debug  B3-Return");
+    LCDMessage(LINE2_START_ADDR, "B2-Name(B0-L B1-R)");
+    PWMAudioOff(BUZZER1);
+    PWMAudioOff(BUZZER2);
+    Name=FALSE;
+    Input=FALSE;
+    u8count=0;
+    u8count1=0;
+    u8count2=3;
+    u8index=0;
+    u8index1=0;
+    LedOff(WHITE);
+    LedOff(PURPLE);
+    LedOff(YELLOW);
+    LedOff(BLUE);
+    LedOff(CYAN);
+    LedOff(GREEN);
+    LedOff(ORANGE);
+    LedOff(RED);
+  }
 } /* end UserApp1SM_Idle() */
     
 
