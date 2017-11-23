@@ -81,11 +81,20 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
-  u8 au8UserApp1Start1[] = "LED program task started\n\r";
+  extern u8 G_au8DebugScanfBuffer[]; 
+  extern u8 G_u8DebugScanfCharCount;
+  DebugPrintf("LED Programming Interface");
+  DebugLineFeed();
+  DebugPrintf("Press 1 to program LED command sequence");
+  DebugLineFeed();
+  DebugPrintf("Press 2 to show current USER program");
+  DebugLineFeed();
+
+  //u8 au8UserApp1Start1[] = "LED program task started\n\r";
   
   /* Turn off the Debug task command processor and announce the task is ready */
-  DebugSetPassthrough();
-  DebugPrintf(au8UserApp1Start1);
+  //DebugSetPassthrough();
+  //DebugPrintf(au8UserApp1Start1);
   
     /* If good initialization, set state to Idle */
   if( 1 )
@@ -135,7 +144,208 @@ State Machine Function Definitions
 /* Wait for input */
 static void UserApp1SM_Idle(void)
 {
+   static u8 au8UserInputBuffer[5];
+  static LedCommandType LED;
+  static u8 u8String[20];
+  static u8 u8index=0,u8index1,u8i,u8j,u8number=1;
+  static u32 u32TimeOn,u32TimeOff;
+  static bool Menu=TRUE;
+  static bool Enter=FALSE;
+  static bool List=FALSE;
   
+ if(G_u8DebugScanfCharCount>0)
+  {
+    DebugScanf(au8UserInputBuffer);
+/**************************************
+              PRESS 1
+**************************************/
+    if(Menu==TRUE)
+    {
+      if(au8UserInputBuffer[0]=='1')
+      {
+        DebugLineFeed();
+        DebugLineFeed();
+        DebugPrintf("Enter commands as LED-ONTIME-OFFTIME and press Enter");
+        DebugLineFeed();
+        DebugPrintf("Time is in milliseconds,max 100 commands");
+        DebugLineFeed();
+        DebugPrintf("LED colors:R, O, Y, G, C, B, P, W");
+        DebugLineFeed();
+        DebugPrintf("Example:R-100-200 (Red on at 100ms and off at 200ms)");
+        DebugLineFeed();
+        DebugPrintf("Press Enter on blank line to end");
+        DebugLineFeed();
+        DebugPrintf("1:");
+        Menu=FALSE;
+       }
+    }
+    u8String[u8index]=au8UserInputBuffer[0];
+    u8index++;
+    if(u8String[u8index-1]==0x0D)
+    {
+      u8index=1;
+      Enter=TRUE;
+      u8number++;
+      DebugLineFeed();
+      DebugPrintNumber(u8number);
+      DebugPrintf(":");
+    }
+/*********************START**************/
+    if(Enter==TRUE)
+    {
+      for(u8i=3;u8i<20;u8i++)
+      {
+        if(u8String[u8i]==0x2D)
+        {
+          u8index1=u8i;
+          u8i=20;
+        }
+      }
+/*******TIME ON****************/
+      if(u8index1-3==3)
+      {
+        u32TimeOn=(u8String[3]-48)*100+(u8String[4]-48)*10+(u8String[5]-48);
+      }
+      if(u8index1-3==4)
+      {
+        u32TimeOn=(u8String[3]-48)*1000+(u8String[4]-48)*100+(u8String[5]-48)*10+(u8String[6]-48);
+      }
+/********TIME OFF*************/
+      if(u8String[u8index1+4]==0x0D)
+      {
+        u32TimeOff=(u8String[u8index1+1]-48)*100+(u8String[u8index1+2]-48)*10+(u8String[u8index1+3]-48);
+      }
+      if(u8String[u8index1+5]==0x0D)
+      {
+        u32TimeOff=(u8String[u8index1+1]-48)*1000+(u8String[u8index1+2]-48)*100+(u8String[u8index1+3]-48)*10+(u8String[u8index1+4]-48);
+      }
+/*********************************
+        BACK TO THE MENU    
+*********************************/
+      if(u8String[1]=='b'&&u8String[2]=='a'&&u8String[3]=='c'&&u8String[4]=='k')
+      {
+          DebugLineFeed();
+          DebugPrintf("LED Programming Interface");
+          DebugLineFeed();
+          DebugPrintf("Press 1 to program LED command sequence");
+          DebugLineFeed();
+          DebugPrintf("Press 2 to show current USER program");
+          DebugLineFeed();
+          Menu=TRUE;
+          for(u8 i=1;i<20;i++)
+          {
+            u8String[i]='\0';
+          }
+      }
+/******************WHITE****************************/
+      if(u8String[1]=='W')
+      {
+        LED.eLED=WHITE;
+        LED.u32Time=u32TimeOn;
+        LED.bOn=TRUE;
+        LED.u32Time=u32TimeOff;
+        LED.bOn=FALSE;
+        LedDisplayAddCommand(USER_LIST,&LED);
+      }
+/**********************PURPLE**************************/
+      if(u8String[1]=='P')
+      {
+        LED.eLED=PURPLE;
+        LED.u32Time=u32TimeOn;
+        LED.bOn=TRUE;
+        LED.u32Time=u32TimeOff;
+        LED.bOn=FALSE;
+        LedDisplayAddCommand(USER_LIST,&LED);
+      }
+/*******************BLUE****************************/
+      if(u8String[1]=='B')
+      {
+        LED.eLED=BLUE;
+        LED.u32Time=u32TimeOn;
+        LED.bOn=TRUE;
+        LED.u32Time=u32TimeOff;
+        LED.bOn=FALSE;
+        LedDisplayAddCommand(USER_LIST,&LED);
+      }
+/*******************CYAN********************************/
+      if(u8String[1]=='C')
+      {
+        LED.eLED=CYAN;
+        LED.u32Time=u32TimeOn;
+        LED.bOn=TRUE;
+        LED.u32Time=u32TimeOff;
+        LED.bOn=FALSE;
+        LedDisplayAddCommand(USER_LIST,&LED);
+      }
+/***********************GREEN************************/
+      if(u8String[1]=='G')
+      {
+        LED.eLED=GREEN;
+        LED.u32Time=u32TimeOn;
+        LED.bOn=TRUE;
+        LED.u32Time=u32TimeOff;
+        LED.bOn=FALSE;
+        LedDisplayAddCommand(USER_LIST,&LED);
+      }
+/**********************YELLOW*************************/
+      if(u8String[1]=='Y')
+      {
+        LED.eLED=YELLOW;
+        LED.u32Time=u32TimeOn;
+        LED.bOn=TRUE;
+        LED.u32Time=u32TimeOff;
+        LED.bOn=FALSE;
+        LedDisplayAddCommand(USER_LIST,&LED);
+      }
+/**********************ORANGE**************************/
+      if(u8String[1]=='O')
+      {
+        LED.eLED=ORANGE;
+        LED.u32Time=u32TimeOn;
+        LED.bOn=TRUE;
+        LED.u32Time=u32TimeOff;
+        LED.bOn=FALSE;
+        LedDisplayAddCommand(USER_LIST,&LED);
+      }
+/**********************RED*****************************/
+      if(u8String[1]=='R')
+      {
+        LED.eLED=RED;
+        LED.u32Time=u32TimeOn;
+        LED.bOn=TRUE;
+        LED.u32Time=u32TimeOff;
+        LED.bOn=FALSE;
+        LedDisplayAddCommand(USER_LIST,&LED);
+      }
+     }
+/************************************
+            PRESS 2
+*************************************/
+    if(Menu==TRUE)
+    {
+      if(au8UserInputBuffer[0]=='2')
+      { 
+        DebugLineFeed();
+        DebugLineFeed();
+        DebugPrintf("Current USER program:");
+        DebugLineFeed();
+        DebugLineFeed();
+        DebugPrintf("LED  ON TIME  OFF TIME");
+        DebugLineFeed();
+        DebugPrintf("-----------------------");
+        DebugLineFeed();
+        Menu=FALSE;
+        List=TRUE;
+      }
+      if(List==TRUE)
+      {
+        for(u8j=0;u8j<u8number;u8j++)
+        {
+          LedDisplayPrintListLine(u8j);
+        }
+      }
+    }
+  }
 } /* end UserApp1SM_Idle() */
                       
             

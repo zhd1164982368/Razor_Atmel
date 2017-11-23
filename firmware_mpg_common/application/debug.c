@@ -409,14 +409,14 @@ void SystemStatusReport(void)
 #endif /* MPGL2 */
 
   /* Announce init complete then report any tasks that failed init */
-  DebugPrintf(au8SystemReady);
+  //DebugPrintf(au8SystemReady);
     
   for(u8 i = 0; i < NUMBER_APPLICATIONS; i++)
   {
     if( !(u32TaskFlagMaskBit & G_u32ApplicationFlags) )
     {
       bNoFailedTasks = FALSE;
-      DebugPrintf(&aau8AppShortNames[i][0]);
+      //DebugPrintf(&aau8AppShortNames[i][0]);
       DebugLineFeed();
     }
     
@@ -1263,7 +1263,7 @@ void DebugSM_CheckCmd(void)
   /* Otherwise print an error message and return to Idle */
   else
   { 
-    DebugPrintf(au8InvalidCommand);
+    //DebugPrintf(au8InvalidCommand);
     Debug_pfnStateMachine = DebugSM_Idle;
   }
 
