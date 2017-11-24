@@ -193,6 +193,7 @@ static void UserApp1SM_Idle(void)
 /*********************START**************/
     if(Enter==TRUE)
     {
+      Enter=FALSE;
       for(u8i=3;u8i<20;u8i++)
       {
         if(u8String[u8i]==0x2D)
@@ -243,6 +244,7 @@ static void UserApp1SM_Idle(void)
         LED.eLED=WHITE;
         LED.u32Time=u32TimeOn;
         LED.bOn=TRUE;
+        LedDisplayAddCommand(USER_LIST,&LED);
         LED.u32Time=u32TimeOff;
         LED.bOn=FALSE;
         LedDisplayAddCommand(USER_LIST,&LED);
@@ -253,6 +255,7 @@ static void UserApp1SM_Idle(void)
         LED.eLED=PURPLE;
         LED.u32Time=u32TimeOn;
         LED.bOn=TRUE;
+        LedDisplayAddCommand(USER_LIST,&LED);
         LED.u32Time=u32TimeOff;
         LED.bOn=FALSE;
         LedDisplayAddCommand(USER_LIST,&LED);
@@ -263,6 +266,7 @@ static void UserApp1SM_Idle(void)
         LED.eLED=BLUE;
         LED.u32Time=u32TimeOn;
         LED.bOn=TRUE;
+        LedDisplayAddCommand(USER_LIST,&LED);
         LED.u32Time=u32TimeOff;
         LED.bOn=FALSE;
         LedDisplayAddCommand(USER_LIST,&LED);
@@ -273,6 +277,7 @@ static void UserApp1SM_Idle(void)
         LED.eLED=CYAN;
         LED.u32Time=u32TimeOn;
         LED.bOn=TRUE;
+        LedDisplayAddCommand(USER_LIST,&LED);
         LED.u32Time=u32TimeOff;
         LED.bOn=FALSE;
         LedDisplayAddCommand(USER_LIST,&LED);
@@ -283,6 +288,7 @@ static void UserApp1SM_Idle(void)
         LED.eLED=GREEN;
         LED.u32Time=u32TimeOn;
         LED.bOn=TRUE;
+        LedDisplayAddCommand(USER_LIST,&LED);
         LED.u32Time=u32TimeOff;
         LED.bOn=FALSE;
         LedDisplayAddCommand(USER_LIST,&LED);
@@ -293,6 +299,7 @@ static void UserApp1SM_Idle(void)
         LED.eLED=YELLOW;
         LED.u32Time=u32TimeOn;
         LED.bOn=TRUE;
+        LedDisplayAddCommand(USER_LIST,&LED);
         LED.u32Time=u32TimeOff;
         LED.bOn=FALSE;
         LedDisplayAddCommand(USER_LIST,&LED);
@@ -303,6 +310,7 @@ static void UserApp1SM_Idle(void)
         LED.eLED=ORANGE;
         LED.u32Time=u32TimeOn;
         LED.bOn=TRUE;
+        LedDisplayAddCommand(USER_LIST,&LED);
         LED.u32Time=u32TimeOff;
         LED.bOn=FALSE;
         LedDisplayAddCommand(USER_LIST,&LED);
@@ -313,6 +321,7 @@ static void UserApp1SM_Idle(void)
         LED.eLED=RED;
         LED.u32Time=u32TimeOn;
         LED.bOn=TRUE;
+        LedDisplayAddCommand(USER_LIST,&LED);
         LED.u32Time=u32TimeOff;
         LED.bOn=FALSE;
         LedDisplayAddCommand(USER_LIST,&LED);
