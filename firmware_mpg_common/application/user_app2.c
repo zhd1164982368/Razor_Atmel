@@ -520,7 +520,7 @@ void UserApp2Initialize(void)
 
   /* Load the LCD and complete the initialization */
   LoadLcdScreen();
-  DebugPrintf(au8UserApp1Start2);
+  //DebugPrintf(au8UserApp1Start2);
   
   /* If good initialization, set state to Idle */
   if( 1 )

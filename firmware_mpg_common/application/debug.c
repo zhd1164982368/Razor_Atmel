@@ -340,7 +340,7 @@ void DebugSetPassthrough(void)
 {
   G_u32DebugFlags |= _DEBUG_PASSTHROUGH;
   
-  DebugPrintf("\n\n\r***Debug Passthrough enabled***\n\n\r");
+  //DebugPrintf("\n\n\r***Debug Passthrough enabled***\n\n\r");
 
 } /* end DebugSetPassthrough */
 
