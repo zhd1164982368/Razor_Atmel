@@ -89,6 +89,7 @@ bool AntReadAppMessageBuffer(void);
 /*--------------------------------------------------------------------------------------------------------------------*/
 void AntApiInitialize(void);
 void AntApiRunActiveState(void);
+void AntCalculateChecksum(u8* pu8Data);
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Private functions                                                                                                  */

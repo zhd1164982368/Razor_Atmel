@@ -266,7 +266,20 @@ static void UserApp1SM_Idle(void)
   
 } /* end UserApp1SM_Idle() */
 
-
+static u8 u8Data[5]={0x02,0x01,0x03,0x04};
+u8* pu8Data=u8Data;
+void AntCalculateChecksum(u8* pu8Data)
+  {
+    static u8 u8counter,u8length;
+    static u8 u8checksum;
+    u8length=*(pu8Data+1)+3;
+    u8checksum=*pu8Data;
+    for(u8counter=1;u8counter<u8length;u8counter++)
+    {
+      u8checksum=u8checksum^*(pu8Data+u8counter);
+    }
+    *(pu8Data+4)=u8checksum;
+  }
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error (for now, do nothing) */
 static void UserApp1SM_Error(void)          
