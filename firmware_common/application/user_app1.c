@@ -87,7 +87,19 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
- 
+ LCDCommand(LCD_CLEAR_CMD);
+ LedOff(WHITE);
+ LedOff(PURPLE);
+ LedOff(BLUE);
+ LedOff(CYAN);
+ LedOff(GREEN);
+ LedOff(YELLOW);
+ LedOff(ORANGE);
+ LedOff(RED);
+ LedOff(LCD_RED);
+ LedOff(LCD_GREEN);
+ LedOff(LCD_BLUE);
+ PWMAudioOff(BUZZER1);
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -136,7 +148,100 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
+  extern u8 G_au8DebugScanfBuffer; 
+  extern u8 G_u8DebugScanfCharCount; 
 
+  static u8 au8UserInputBuffer[5];
+  static u8 u8String[3];
+  static u8 u8index=0;
+  static u16 u16time=0;
+  static bool ring=FALSE;
+  
+  if(G_u8DebugScanfCharCount>0) 
+  { 
+    DebugScanf(au8UserInputBuffer); 
+    u8String[u8index]=au8UserInputBuffer[0];
+    u8index++;
+  }
+  /**************  STATE 1  ***************************/
+  if((WasButtonPressed(BUTTON1)||(u8String[0]=='1'&&u8String[1]==0x0D)))
+  {
+    u8index=0;
+    for(u8 i=0;i<3;i++)
+    {
+      u8String[i]='\0';
+    }
+    ButtonAcknowledge(BUTTON1);
+    LCDCommand(LCD_CLEAR_CMD);
+    DebugPrintf("------------------------");
+    DebugLineFeed();
+    DebugPrintf("Entering state 1");
+    DebugLineFeed();
+    DebugPrintf("------------------------");
+    DebugLineFeed();
+    LCDMessage(LINE1_START_ADDR, "STATE 1");
+    LedOn(WHITE);
+    LedOn(PURPLE);
+    LedOn(BLUE);
+    LedOn(CYAN);
+    LedOff(GREEN);
+    LedOff(YELLOW);
+    LedOff(ORANGE);
+    LedOff(RED);
+    LedOn(LCD_RED);
+    LedOff(LCD_GREEN);
+    LedOn(LCD_BLUE);
+    PWMAudioOff(BUZZER1);
+    ring=FALSE;
+  }
+  /***************  STATE 2  **********************/
+  if((WasButtonPressed(BUTTON2)||(u8String[0]=='2'&&u8String[1]==0x0D)))
+  {
+    u8index=0;
+    for(u8 j=0;j<3;j++)
+    {
+      u8String[j]='\0';
+    }
+    ButtonAcknowledge(BUTTON2);
+    LCDCommand(LCD_CLEAR_CMD);
+    DebugPrintf("------------------------");
+    DebugLineFeed();
+    DebugPrintf("Entering state 2");
+    DebugLineFeed();
+    DebugPrintf("------------------------");
+    DebugLineFeed();
+    LCDMessage(LINE1_START_ADDR, "STATE 2");
+    LedOff(WHITE);
+    LedOff(PURPLE);
+    LedOff(BLUE);
+    LedOff(CYAN);
+    LedBlink(GREEN, LED_1HZ);
+    LedBlink(YELLOW, LED_2HZ);
+    LedBlink(ORANGE, LED_4HZ);
+    LedBlink(RED, LED_8HZ);
+    LedOff(LCD_BLUE);
+    LedPWM(LCD_RED, LED_PWM_100);
+    LedPWM(LCD_GREEN, LED_PWM_50);
+    PWMAudioSetFrequency(BUZZER1, 200);
+    ring=TRUE;
+  }
+  if(ring==TRUE)
+  {
+    if(u16time<=100)
+      {
+       PWMAudioOn(BUZZER1);
+       u16time++;
+      }
+    if(u16time>100&&u16time<=1000)
+    {
+      PWMAudioOff(BUZZER1);
+      u16time++;
+    }
+    if(u16time>1000)
+    {
+      u16time=0;
+    }
+  }
 } /* end UserApp1SM_Idle() */
     
 

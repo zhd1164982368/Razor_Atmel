@@ -387,7 +387,7 @@ void SystemStatusReport(void)
 #endif /* MPGL2 */
 
   /* Announce init complete then report any tasks that failed init */
-  DebugPrintf(au8SystemReady);
+  //DebugPrintf(au8SystemReady);
     
   for(u8 i = 0; i < NUMBER_APPLICATIONS; i++)
   {
@@ -403,7 +403,7 @@ void SystemStatusReport(void)
         
   if( bNoFailedTasks)
   {
-    DebugPrintf(au8SystemPassed);
+    //DebugPrintf(au8SystemPassed);
   }
   
   DebugLineFeed();
