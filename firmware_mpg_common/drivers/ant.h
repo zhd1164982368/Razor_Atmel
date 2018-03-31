@@ -69,10 +69,10 @@ typedef enum {ANT_CHANNEL_0 = 0, ANT_CHANNEL_1, ANT_CHANNEL_2, ANT_CHANNEL_3,
 /* Data struct for extended data information */
 typedef struct
 {
-  u8 u8Channel;                            /* Channel number */
-  u8 u8Flags;                              /* Extended data flags from the received message */
+  u8 u8Channel;                            /* Extended data flags from the received message */
   u16 u16DeviceID;                         /* Device ID from the received message */
-  u8 u8DeviceType;                         /* Device Type from the received message */
+  u8 u8DeviceType;                         /* Channel number */
+  u8 u8Flags;                              /* Device Type from the received message */
   u8 u8TransType;                          /* Transmission Type from the received message */
   s8 s8RSSI;                               /* RSSI from the received message */
   u8 u8Dummy;                              /* Pad for 4-byte alignment */
