@@ -199,29 +199,30 @@ static void UserApp1SM_AntChannelAssign()
 static void UserApp1SM_Idle(void)
 {
   static u8 au8TestMessage[] = {0x5B, 0, 0, 0, 0xFF, 0, 0, 0};
+  static u8 u8MessageNumber[3],u8FailMessage[3];
   u8 au8DataContent[] = "xxxxxxxxxxxxxxxx";
   
   /* Check all the buttons and update au8TestMessage according to the button state */ 
-  au8TestMessage[0] = 0x00;
+  //au8TestMessage[0] = 0x00;
   if( IsButtonPressed(BUTTON0) )
   {
     au8TestMessage[0] = 0xff;
   }
   
-  au8TestMessage[1] = 0x00;
+  //au8TestMessage[1] = 0x00;
   if( IsButtonPressed(BUTTON1) )
   {
     au8TestMessage[1] = 0xff;
   }
 
 #ifdef EIE1
-  au8TestMessage[2] = 0x00;
+  //au8TestMessage[2] = 0x00;
   if( IsButtonPressed(BUTTON2) )
   {
     au8TestMessage[2] = 0xff;
   }
 
-  au8TestMessage[3] = 0x00;
+  //au8TestMessage[3] = 0x00;
   if( IsButtonPressed(BUTTON3) )
   {
     au8TestMessage[3] = 0xff;
@@ -260,17 +261,26 @@ static void UserApp1SM_Idle(void)
           au8TestMessage[5]++;
         }
       }
+      u8MessageNumber[0]=au8TestMessage[5];
+      u8MessageNumber[1]=au8TestMessage[6];
+      u8MessageNumber[2]=au8TestMessage[7];
+      //LCDCommand(LCD_CLEAR_CMD);
+      LCDMessage(LINE1_START_ADDR, u8MessageNumber);
       if(G_au8AntApiCurrentMessageBytes[3]==0x06)
       {
         au8TestMessage[3]++;
         if(au8TestMessage[3] == 0)
         {
           au8TestMessage[2]++;
+          if(au8TestMessage[2]==0)
+          {
+            au8TestMessage[1]++;
+          }
         }
-        if(au8TestMessage[2]==0)
-        {
-          au8TestMessage[1]++;
-        }
+        u8FailMessage[0]=au8TestMessage[1];
+        u8FailMessage[1]=au8TestMessage[2];
+        u8FailMessage[2]=au8TestMessage[3];
+        LCDMessage(LINE2_START_ADDR, u8FailMessage);
       }
       AntQueueAcknowledgedMessage(ANT_CHANNEL_USERAPP, au8TestMessage);
     }
