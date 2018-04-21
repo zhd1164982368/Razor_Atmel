@@ -63,7 +63,9 @@ Variable names shall start with "UserApp1_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp1_StateMachine;            /* The state machine function pointer */
 static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
-static AntAssignChannelInfoType UserApp1_sChannelInfo; /* ANT setup parameters */ 
+static AntAssignChannelInfoType UserApp1_sMasterChannel; 
+static AntAssignChannelInfoType UserApp1_sSlave1Channel; 
+static AntAssignChannelInfoType UserApp1_sSlave0Channel; 
 static u8 UserApp1_au8MessageFail[] = "\n\r***ANT channel setup failed***\n\n\r"; 
 
 
@@ -93,7 +95,6 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
- 
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -118,36 +119,77 @@ void UserApp1Initialize(void)
     
  #endif /* MPG2 */ 
  
- 
-  /* Configure ANT for this application */ 
-   UserApp1_sChannelInfo.AntChannel          = ANT_CHANNEL_USERAPP; 
-   UserApp1_sChannelInfo.AntChannelType      = ANT_CHANNEL_TYPE_USERAPP; 
-   UserApp1_sChannelInfo.AntChannelPeriodLo  = ANT_CHANNEL_PERIOD_LO_USERAPP; 
-   UserApp1_sChannelInfo.AntChannelPeriodHi  = ANT_CHANNEL_PERIOD_HI_USERAPP; 
-   UserApp1_sChannelInfo.AntDeviceIdLo       = ANT_DEVICEID_LO_USERAPP; 
-   UserApp1_sChannelInfo.AntDeviceIdHi       = ANT_DEVICEID_HI_USERAPP; 
-   UserApp1_sChannelInfo.AntDeviceType       = ANT_DEVICE_TYPE_USERAPP; 
-   UserApp1_sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_USERAPP; 
-   UserApp1_sChannelInfo.AntFrequency        = ANT_FREQUENCY_USERAPP; 
-   UserApp1_sChannelInfo.AntTxPower          = ANT_TX_POWER_USERAPP;  
-   UserApp1_sChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT; 
+ /* Start with all LEDs off except red blacklight */ 
+   LedOff(RED); 
+   LedOff(ORANGE); 
+   LedOff(YELLOW); 
+   LedOff(GREEN); 
+   LedOff(CYAN); 
+   LedOff(BLUE); 
+   LedOff(PURPLE); 
+   LedOff(WHITE); 
+   LedOff(LCD_GREEN); 
+   LedOff(LCD_BLUE); 
+   LedOff(LCD_RED); 
+
+/* Master (Channel 2) */ 
+   UserApp1_sMasterChannel.AntChannel = ANT_CHANNEL_2; 
+   UserApp1_sMasterChannel.AntChannelType = CHANNEL_TYPE_MASTER; 
+   UserApp1_sMasterChannel.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT; 
+   UserApp1_sMasterChannel.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;     
+   UserApp1_sMasterChannel.AntDeviceIdHi = FOO; 
+   UserApp1_sMasterChannel.AntDeviceIdLo = BAR; 
+   UserApp1_sMasterChannel.AntDeviceType = EIE_DEVICE_TYPE; 
+   UserApp1_sMasterChannel.AntTransmissionType = EIE_TRANS_TYPE;     
+   UserApp1_sMasterChannel.AntFrequency = ANT_FREQUENCY_DEFAULT; 
+   UserApp1_sMasterChannel.AntTxPower = ANT_TX_POWER_DEFAULT; 
+   UserApp1_sMasterChannel.AntNetwork = ANT_NETWORK_DEFAULT; 
+   
+/* Slave1 (Channel 1) */ 
+   UserApp1_sSlave1Channel.AntChannel = ANT_CHANNEL_1; 
+   UserApp1_sSlave1Channel.AntChannelType = CHANNEL_TYPE_SLAVE; 
+   UserApp1_sSlave1Channel.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT; 
+   UserApp1_sSlave1Channel.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;  
+   UserApp1_sSlave1Channel.AntDeviceIdHi = FOO; 
+   UserApp1_sSlave1Channel.AntDeviceIdLo = BAR; 
+   UserApp1_sSlave1Channel.AntDeviceType = EIE_DEVICE_TYPE; 
+   UserApp1_sSlave1Channel.AntTransmissionType = EIE_TRANS_TYPE;     
+   UserApp1_sSlave1Channel.AntFrequency = ANT_FREQUENCY_DEFAULT; 
+   UserApp1_sSlave1Channel.AntTxPower = ANT_TX_POWER_DEFAULT; 
+   UserApp1_sSlave1Channel.AntNetwork = ANT_NETWORK_DEFAULT; 
+
+/* Slave0 (Channel 0) */ 
+   UserApp1_sSlave0Channel.AntChannel = ANT_CHANNEL_0; 
+   UserApp1_sSlave0Channel.AntChannelType = CHANNEL_TYPE_SLAVE; 
+   UserApp1_sSlave0Channel.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT; 
+   UserApp1_sSlave0Channel.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;  
+   UserApp1_sSlave0Channel.AntDeviceIdHi = FOO; 
+   UserApp1_sSlave0Channel.AntDeviceIdLo = BAR; 
+   UserApp1_sSlave0Channel.AntDeviceType = EIE_DEVICE_TYPE; 
+   UserApp1_sSlave0Channel.AntTransmissionType = EIE_TRANS_TYPE;     
+   UserApp1_sSlave0Channel.AntFrequency = ANT_FREQUENCY_DEFAULT; 
+   UserApp1_sSlave0Channel.AntTxPower = ANT_TX_POWER_DEFAULT; 
+   UserApp1_sSlave0Channel.AntNetwork = ANT_NETWORK_DEFAULT; 
+   
+   
    for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++) 
    { 
-     UserApp1_sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY; 
+     UserApp1_sMasterChannel.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
+     UserApp1_sSlave1Channel.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
+     UserApp1_sSlave0Channel.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
    } 
-    
-   /* Attempt to queue the ANT channel setup */ 
-   if( AntAssignChannel(&UserApp1_sChannelInfo) ) 
-   { 
-     UserApp1_u32Timeout = G_u32SystemTime1ms; 
-     UserApp1_StateMachine = UserApp1SM_AntChannelAssign; 
-   } 
-   else 
-   { 
-     /* The task isn't properly initialized, so shut it down and don't run */ 
-     DebugPrintf(UserApp1_au8MessageFail);    
-     UserApp1_StateMachine = UserApp1SM_Error; 
-   } 
+  AntAssignChannel(&UserApp1_sMasterChannel); 
+  UserApp1_u32Timeout = G_u32SystemTime1ms; 
+  if(1)
+  {
+    UserApp1_StateMachine = UserApp1SM_AntConfigureMaster; 
+  }
+  else 
+  { 
+  /* The task isn't properly initialized, so shut it down and don't run */ 
+    DebugPrintf(UserApp1_au8MessageFail);    
+    UserApp1_StateMachine = UserApp1SM_Error; 
+  } 
 
 } /* end UserApp1Initialize() */
 
@@ -182,31 +224,132 @@ void UserApp1RunActiveState(void)
 State Machine Function Definitions
 **********************************************************************************************************************/
 /* Wait for ANT channel assignment */ 
-static void UserApp1SM_AntChannelAssign() 
+static void UserApp1SM_AntConfigureMaster(void) 
 { 
- if( AntRadioStatusChannel(ANT_CHANNEL_USERAPP) == ANT_CONFIGURED) 
- { 
-   /* Channel assignment is successful, so open channel and 
-   proceed to Idle state */ 
-   AntOpenChannelNumber(ANT_CHANNEL_USERAPP); 
-   UserApp1_StateMachine = UserApp1SM_Idle; 
+ if( AntRadioStatusChannel(ANT_CHANNEL_2) == ANT_CONFIGURED) 
+ {
+   DebugPrintf("Master channel configured\n\n\r");       
+   /* Queue configuration of Slave channel */ 
+   AntAssignChannel(&UserApp1_sSlave1Channel); 
+   UserApp1_u32Timeout = G_u32SystemTime1ms; 
+   UserApp1_StateMachine = UserApp1SM_AntConfigureSlave1; 
  } 
   
  /* Watch for time out */ 
  if(IsTimeUp(&UserApp1_u32Timeout, 3000)) 
  { 
-   DebugPrintf(UserApp1_au8MessageFail); 
+   LCDCommand(LCD_CLEAR_CMD); 
+   LCDMessage(LINE1_START_ADDR, "Master config failed"); 
    UserApp1_StateMachine = UserApp1SM_Error;     
  }     
-} /* end UserApp1SM_AntChannelAssign */ 
+} /* end UserApp1SM_AntConfigureMaster */ 
 
+static void UserApp1SM_AntConfigureSlave1(void) 
+{ 
+ /* Wait for the ANT slave channel to be configured */ 
+ if(AntRadioStatusChannel(ANT_CHANNEL_1) == ANT_CONFIGURED) 
+ { 
+   DebugPrintf("Slave1 channel configured\n\n\r"); 
+   UserApp1_u32Timeout = G_u32SystemTime1ms;
+   UserApp1_StateMachine = UserApp1SM_AntConfigureSlave0; 
+ }  
+ /* Check for timeout */ 
+ if( IsTimeUp(&UserApp1_u32Timeout, ANT_CONFIGURE_TIMEOUT_MS) ) 
+ { 
+   LCDCommand(LCD_CLEAR_CMD); 
+   LCDMessage(LINE1_START_ADDR, "Slave1 config failed"); 
+   UserApp1_StateMachine = UserApp1SM_Error;     
+ } 
+} /* end UserApp1SM_AntConfigureSlave1() */ 
+
+static void UserApp1SM_AntConfigureSlave0(void) 
+{ 
+ /* Wait for the ANT slave channel to be configured */ 
+ if(AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_CONFIGURED) 
+ { 
+   DebugPrintf("Slave0 channel configured\n\n\r"); 
+   UserApp1_u32Timeout = G_u32SystemTime1ms;
+   UserApp1_StateMachine = UserApp1SM_Idle; 
+ }  
+ /* Check for timeout */ 
+ if( IsTimeUp(&UserApp1_u32Timeout, ANT_CONFIGURE_TIMEOUT_MS) ) 
+ { 
+   LCDCommand(LCD_CLEAR_CMD); 
+   LCDMessage(LINE1_START_ADDR, "Slave0 config failed"); 
+   UserApp1_StateMachine = UserApp1SM_Error;     
+ } 
+} /* end UserApp1SM_AntConfigureSlave1() */ 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
-
+  /* Write the one line of code to use the BUTTON API to check if BUTTON0 was pressed */  
+   if(WasButtonPressed(BUTTON0)) 
+   { 
+     ButtonAcknowledge(BUTTON0);
+     LCDCommand(LCD_CLEAR_CMD); 
+     LCDMessage(LINE1_START_ADDR,"Seeker");  
+     /* Queue the Channel Open messages and then go to wait state */ 
+     AntOpenChannelNumber(ANT_CHANNEL_0); 
+     //AntOpenChannelNumber(ANT_CHANNEL_1);
+     //AntOpenChannelNumber(ANT_CHANNEL_2);       
+     UserApp1_u32Timeout = G_u32SystemTime1ms; 
+     UserApp1_StateMachine = UserApp1SM_OpeningChannels;     
+   } 
 } /* end UserApp1SM_Idle() */
     
+static void UserApp1SM_OpeningChannels(void) 
+{ 
+   static u16 u16time=0;
+   static u16 u16timecounter=0;
+   for(u16time=0;u16time<10000;u16time++)
+   {
+     u16timecounter++;
+   }
+   if(u16time==10000)
+   {
+     PWMAudioSetFrequency(BUZZER0,1000);
+     PWMAudioOn(BUZZER0);
+     /* Ensure channel0 have opened */ 
+     if((AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_OPEN)) 
+     { 
+       LCDCommand(LCD_CLEAR_CMD); 
+       LCDMessage(LINE1_START_ADDR,"Ready or not? Here i come");     
+       UserApp1_StateMachine = UserApp1SM_RadioActive;     
+     } 
+     /* Check for timeout */ 
+     if( IsTimeUp(&UserApp1_u32Timeout, ANT_CONFIGURE_TIMEOUT_MS) ) 
+     { 
+       LCDCommand(LCD_CLEAR_CMD); 
+       LCDMessage(LINE1_START_ADDR, "Channel open failed"); 
+       UserApp1_StateMachine = UserApp1SM_Error;     
+     } 
+   }
+} /* end UserApp1SM_OpeningChannels() */ 
+
+static void UserApp1SM_RadioActive(void) 
+{  
+   u8 u8EventCode;     
+   static u8 u32MasterMessageCounter = 0; 
+   static s8 s8RssiChannel0 = -99; 
+   static s8 s8RssiChannel1 = -99; 
+   static s8 s8RssiChannel2 = -99; 
+   static u8 u8Message[]={0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18};
+   
+   if( AntReadAppMessageBuffer() )
+   {
+     if(G_eAntApiCurrentMessageClass == ANT_TICK)
+     {
+       
+     }
+     if(G_eAntApiCurrentMessageClass == ANT_DATA)
+     {
+       
+     }
+   }
+}
+
+
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
