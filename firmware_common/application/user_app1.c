@@ -303,8 +303,8 @@ static void UserApp1SM_Idle(void)
     
 static void UserApp1SM_OpeningChannels(void) 
 { 
-   static u16 u16time=0;
-   static u16 u16timecounter=0;
+   //static u16 u16time=0;
+   //static u16 u16timecounter=0;
    /*for(u16time=0;u16time<10000;u16time++)
    {
      u16timecounter++;
@@ -374,16 +374,113 @@ static void UserApp1SM_RadioActive(void)
        } 
        AntQueueAcknowledgedMessage(ANT_CHANNEL_USERAPP, au8TestMessage);
        s8RssiChannel0=UserApp1_sExtendedData.s8RSSI;
-       if(s8RssiChannel0)
+       if(s8RssiChannel0>=-99&&s8RssiChannel0<=-85)
+       {
+         LedOn(WHITE);
+         LedOff(PURPLE);
+         LedOff(BLUE);
+         LedOff(CYAN);
+         LedOff(GREEN);
+         LedOff(YELLOW);
+         LedOff(ORANGE);
+         LedOff(RED);
+       }
+       if(s8RssiChannel0>=-84&&s8RssiChannel0<=-80)
+       {
+         LedOn(WHITE);
+         LedOn(PURPLE);
+         LedOff(BLUE);
+         LedOff(CYAN);
+         LedOff(GREEN);
+         LedOff(YELLOW);
+         LedOff(ORANGE);
+         LedOff(RED);
+       }
+       if(s8RssiChannel0>=-79&&s8RssiChannel0<=-75)
+       {
+         LedOn(WHITE);
+         LedOn(PURPLE);
+         LedOn(BLUE);
+         LedOff(CYAN);
+         LedOff(GREEN);
+         LedOff(YELLOW);
+         LedOff(ORANGE);
+         LedOff(RED);
+       }
+       if(s8RssiChannel0>=-74&&s8RssiChannel0<=-70)
+       {
+         LedOn(WHITE);
+         LedOn(PURPLE);
+         LedOn(BLUE);
+         LedOn(CYAN);
+         LedOff(GREEN);
+         LedOff(YELLOW);
+         LedOff(ORANGE);
+         LedOff(RED);
+       }
+       if(s8RssiChannel0>=-69&&s8RssiChannel0<=-65)
+       {
+         LedOn(WHITE);
+         LedOn(PURPLE);
+         LedOn(BLUE);
+         LedOn(CYAN);
+         LedOn(GREEN);
+         LedOff(YELLOW);
+         LedOff(ORANGE);
+         LedOff(RED);
+       }
+       if(s8RssiChannel0>=-64&&s8RssiChannel0<=-60)
+       {
+         LedOn(WHITE);
+         LedOn(PURPLE);
+         LedOn(BLUE);
+         LedOn(CYAN);
+         LedOn(GREEN);
+         LedOn(YELLOW);
+         LedOff(ORANGE);
+         LedOff(RED);
+       }
+       if(s8RssiChannel0>=-59&&s8RssiChannel0<=-55)
+       {
+         LedOn(WHITE);
+         LedOn(PURPLE);
+         LedOn(BLUE);
+         LedOn(CYAN);
+         LedOn(GREEN);
+         LedOn(YELLOW);
+         LedOn(ORANGE);
+         LedOff(RED);
+       }
+       if(s8RssiChannel0>=-54&&s8RssiChannel0<=-50)
+       {
+         LedOn(WHITE);
+         LedOn(PURPLE);
+         LedOn(BLUE);
+         LedOn(CYAN);
+         LedOn(GREEN);
+         LedOn(YELLOW);
+         LedOn(ORANGE);
+         LedOn(RED);
+       }
      }
      else if(G_eAntApiCurrentMessageClass == ANT_TICK)
      {
-       
+       if(G_au8AntApiCurrentMessageBytes[3]==0x06) 
+       { 
+         u8TestMessage[3]++; 
+         if(u8TestMessage[3] == 0) 
+         { 
+           u8TestMessage[2]++; 
+           if(u8TestMessage[2]==0) 
+           { 
+             u8TestMessage[1]++; 
+           } 
+         }
+       } 
      }
    }
    UserApp1_u32Timeout = G_u32SystemTime1ms; 
    UserApp1_StateMachine = UserApp1SM_ClosingChannels; 
-
 }
 
 static void UserApp1SM_ClosingChannels(void) 
