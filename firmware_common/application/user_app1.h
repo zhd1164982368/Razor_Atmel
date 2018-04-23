@@ -70,6 +70,14 @@ static void UserApp1SM_Idle(void);
 static void UserApp1SM_Error(void);         
 
 static void UserApp1SM_AntChannelAssign(void);
+
+static void UserApp1SM_AntConfigureMaster(void); 
+static void UserApp1SM_AntConfigureSlave1(void); 
+static void UserApp1SM_AntConfigureSlave0(void);   
+static void UserApp1SM_OpeningChannels(void); 
+static void UserApp1SM_ClosingChannels(void); 
+static void UserApp1SM_RadioActive(void); 
+
 #endif /* __USER_APP1_H */
 
 
