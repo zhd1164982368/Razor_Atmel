@@ -271,12 +271,25 @@ static void UserApp1SM_Idle(void)
      ButtonAcknowledge(BUTTON0);  
      /* Queue the Channel Open messages and then go to wait state */ 
      AntOpenChannelNumber(ANT_CHANNEL_0); 
-     //AntOpenChannelNumber(ANT_CHANNEL_1);
-     //AntOpenChannelNumber(ANT_CHANNEL_2);       
+     AntOpenChannelNumber(ANT_CHANNEL_1);
+     AntOpenChannelNumber(ANT_CHANNEL_2);       
      UserApp1_u32Timeout = G_u32SystemTime1ms; 
      UserApp1_StateMachine = UserApp1SM_OpeningChannels;
      LCDCommand(LCD_CLEAR_CMD);
      LCDMessage(LINE2_START_ADDR,"Seeker");     
+   }
+   if(WasButtonPressed(BUTTON3)) 
+   { 
+     ButtonAcknowledge(BUTTON3);
+     LedOff(WHITE);
+     LedOff(PURPLE);
+     LedOff(BLUE);
+     LedOff(CYAN);
+     LedOff(GREEN);
+     LedOff(YELLOW);
+     LedOff(ORANGE);
+     LedOff(RED);
+     PWMAudioOff(BUZZER1);
    } 
 } /* end UserApp1SM_Idle() */
     
@@ -304,9 +317,37 @@ static void UserApp1SM_OpeningChannels(void)
      if( IsTimeUp(&UserApp1_u32Timeout, 3000) ) 
      { 
        LCDCommand(LCD_CLEAR_CMD); 
-       LCDMessage(LINE1_START_ADDR, "Channel open failed"); 
+       LCDMessage(LINE1_START_ADDR, "Channel0 open failed"); 
+       UserApp1_StateMachine = UserApp1SM_Error;     
+     }
+     /* Ensure channel1 have opened */ 
+     if((AntRadioStatusChannel(ANT_CHANNEL_1) == ANT_OPEN)) 
+     { 
+       LCDCommand(LCD_CLEAR_CMD); 
+       LCDMessage(LINE1_START_ADDR,"Channel1 open");     
+       UserApp1_StateMachine = UserApp1SM_RadioActive;     
+     } 
+     /* Check for timeout */ 
+     if( IsTimeUp(&UserApp1_u32Timeout, 3000) ) 
+     { 
+       LCDCommand(LCD_CLEAR_CMD); 
+       LCDMessage(LINE1_START_ADDR, "Channel1 open failed"); 
        UserApp1_StateMachine = UserApp1SM_Error;     
      } 
+     /* Ensure channel2 have opened */ 
+     if((AntRadioStatusChannel(ANT_CHANNEL_2) == ANT_OPEN)) 
+     { 
+       LCDCommand(LCD_CLEAR_CMD); 
+       LCDMessage(LINE1_START_ADDR,"Channel2 open");     
+       UserApp1_StateMachine = UserApp1SM_RadioActive;     
+     } 
+     /* Check for timeout */ 
+     if( IsTimeUp(&UserApp1_u32Timeout, 3000) ) 
+     { 
+       LCDCommand(LCD_CLEAR_CMD); 
+       LCDMessage(LINE1_START_ADDR, "Channel2 open failed"); 
+       UserApp1_StateMachine = UserApp1SM_Error;     
+     }   
    //}
 } /* end UserApp1SM_OpeningChannels() */ 
 
@@ -351,9 +392,9 @@ static void UserApp1SM_RadioActive(void)
            u8TestMessage[5]++; 
          } 
        } 
-       //AntQueueAcknowledgedMessage(ANT_CHANNEL_0, u8TestMessage);
        s8RssiChannel0=G_sAntApiCurrentMessageExtData.s8RSSI;
-       if(s8RssiChannel0>=-99&&s8RssiChannel0<=-85)
+       s8RssiChannel1=G_sAntApiCurrentMessageExtData.s8RSSI;
+       if((s8RssiChannel0>=-99&&s8RssiChannel0<=-95)||(s8RssiChannel1>=-99&&s8RssiChannel1<=-95))
        {
          LedOn(WHITE);
          LedOff(PURPLE);
@@ -365,7 +406,7 @@ static void UserApp1SM_RadioActive(void)
          LedOff(RED);
          PWMAudioOff(BUZZER1);
        }
-       if(s8RssiChannel0>=-84&&s8RssiChannel0<=-80)
+       if((s8RssiChannel0>=-94&&s8RssiChannel0<=-90)||(s8RssiChannel1>=-94&&s8RssiChannel1<=-90))
        {
          LedOn(WHITE);
          LedOn(PURPLE);
@@ -377,7 +418,7 @@ static void UserApp1SM_RadioActive(void)
          LedOff(RED);
          PWMAudioOff(BUZZER1);
        }
-       if(s8RssiChannel0>=-79&&s8RssiChannel0<=-75)
+       if((s8RssiChannel0>=-89&&s8RssiChannel0<=-85)||(s8RssiChannel1>=-89&&s8RssiChannel1<=-85))
        {
          LedOn(WHITE);
          LedOn(PURPLE);
@@ -389,7 +430,7 @@ static void UserApp1SM_RadioActive(void)
          LedOff(RED);
          PWMAudioOff(BUZZER1);
        }
-       if(s8RssiChannel0>=-74&&s8RssiChannel0<=-70)
+       if((s8RssiChannel0>=-84&&s8RssiChannel0<=-80)||(s8RssiChannel1>=-84&&s8RssiChannel1<=-80))
        {
          LedOn(WHITE);
          LedOn(PURPLE);
@@ -399,8 +440,9 @@ static void UserApp1SM_RadioActive(void)
          LedOff(YELLOW);
          LedOff(ORANGE);
          LedOff(RED);
+         PWMAudioOff(BUZZER1);
        }
-       if(s8RssiChannel0>=-69&&s8RssiChannel0<=-65)
+       if((s8RssiChannel0>=-79&&s8RssiChannel0<=-75)||(s8RssiChannel1>=-79&&s8RssiChannel1<=-75))
        {
          LedOn(WHITE);
          LedOn(PURPLE);
@@ -410,12 +452,9 @@ static void UserApp1SM_RadioActive(void)
          LedOff(YELLOW);
          LedOff(ORANGE);
          LedOff(RED);
-         PWMAudioSetFrequency(BUZZER1,400);
-         PWMAudioOn(BUZZER1);
-         u8TestMessage[0]=2;
-         AntQueueAcknowledgedMessage(ANT_CHANNEL_0, u8TestMessage); 
+         PWMAudioOff(BUZZER1);
        }
-       if(s8RssiChannel0>=-64&&s8RssiChannel0<=-60)
+       if((s8RssiChannel0>=-74&&s8RssiChannel0<=-70)||(s8RssiChannel1>=-74&&s8RssiChannel1<=-70))
        {
          LedOn(WHITE);
          LedOn(PURPLE);
@@ -425,14 +464,9 @@ static void UserApp1SM_RadioActive(void)
          LedOn(YELLOW);
          LedOff(ORANGE);
          LedOff(RED);
-         PWMAudioSetFrequency(BUZZER1,600);
-         PWMAudioOn(BUZZER1);
-         AntCloseChannelNumber(ANT_CHANNEL_0);
-         //AntCloseChannelNumber(ANT_CHANNEL_1);
-         //AntCloseChannelNumber(ANT_CHANNEL_2);
-         UserApp1_StateMachine = UserApp1SM_ClosingChannels;
+         PWMAudioOff(BUZZER1);
        }
-       if(s8RssiChannel0>=-59&&s8RssiChannel0<=-55)
+       if((s8RssiChannel0>=-69&&s8RssiChannel0<=-65)||(s8RssiChannel1>=-69&&s8RssiChannel1<=-65))
        {
          LedOn(WHITE);
          LedOn(PURPLE);
@@ -442,14 +476,9 @@ static void UserApp1SM_RadioActive(void)
          LedOn(YELLOW);
          LedOn(ORANGE);
          LedOff(RED);
-         PWMAudioSetFrequency(BUZZER1,800);
-         PWMAudioOn(BUZZER1);
-         AntCloseChannelNumber(ANT_CHANNEL_0);
-         //AntCloseChannelNumber(ANT_CHANNEL_1);
-         //AntCloseChannelNumber(ANT_CHANNEL_2);
-         UserApp1_StateMachine = UserApp1SM_ClosingChannels;
+         PWMAudioOff(BUZZER1);
        }
-       if(s8RssiChannel0>=-54&&s8RssiChannel0<=-50)
+       if((s8RssiChannel0>=-60&&s8RssiChannel0<=-50)||(s8RssiChannel1>=-60&&s8RssiChannel1<=-50))
        {
          LedOn(WHITE);
          LedOn(PURPLE);
@@ -462,9 +491,11 @@ static void UserApp1SM_RadioActive(void)
          PWMAudioSetFrequency(BUZZER1,1000);
          PWMAudioOn(BUZZER1);
          AntCloseChannelNumber(ANT_CHANNEL_0);
-         //AntCloseChannelNumber(ANT_CHANNEL_1);
-         //AntCloseChannelNumber(ANT_CHANNEL_2);
-         UserApp1_StateMachine = UserApp1SM_ClosingChannels; 
+         AntCloseChannelNumber(ANT_CHANNEL_1);
+         u8TestMessage[0]=0xFF;
+         AntQueueAcknowledgedMessage(ANT_CHANNEL_0, u8TestMessage); 
+         AntQueueAcknowledgedMessage(ANT_CHANNEL_1, u8TestMessage); 
+         UserApp1_StateMachine = UserApp1SM_ClosingChannels;
        }
      }
      else if(G_eAntApiCurrentMessageClass == ANT_TICK)
@@ -487,22 +518,25 @@ static void UserApp1SM_RadioActive(void)
 }
 
 static void UserApp1SM_ClosingChannels(void) 
-{ 
+{
    /* Ensure that both channels have opened */ 
-   if((AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_CLOSED)) 
+   if((AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_CLOSED)||(AntRadioStatusChannel(ANT_CHANNEL_1) == ANT_CLOSED)) 
    {  
      LCDCommand(LCD_CLEAR_CMD); 
-     LCDMessage(LINE1_START_ADDR, "Channel close successful"); 
+     LCDMessage(LINE1_START_ADDR, "Channels close"); 
+     LCDMessage(LINE2_START_ADDR, "successful");
      UserApp1_StateMachine = UserApp1SM_Idle;    
    }  
    /* Check for timeout */ 
    if( IsTimeUp(&UserApp1_u32Timeout, 3000) ) 
    { 
      LCDCommand(LCD_CLEAR_CMD); 
-     LCDMessage(LINE1_START_ADDR, "Channel close failed"); 
+     LCDMessage(LINE1_START_ADDR, "Channels close");
+     LCDMessage(LINE2_START_ADDR, "failed"); 
      UserApp1_StateMachine = UserApp1SM_Error;     
    } 
-} /* end UserApp1SM_ClosingChannels() */  
+}
+ /* end UserApp1SM_ClosingChannels() */  
  
 
 

@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=1213000697
+Checksum=410510005
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -27,6 +27,7 @@ TracePortSize=0x00000000
 [watch_formats]
 Fmt0={W}3:AntRadioStatusChannel	2	0
 Fmt1={W}3:s8RssiChannel0	3	0
+Fmt2={W}3:s8RssiChannel1	3	0
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
