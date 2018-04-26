@@ -268,9 +268,7 @@ static void UserApp1SM_Idle(void)
   /* Write the one line of code to use the BUTTON API to check if BUTTON0 was pressed */  
    if(WasButtonPressed(BUTTON0)) 
    { 
-     ButtonAcknowledge(BUTTON0); 
-     LCDCommand(LCD_CLEAR_CMD);
-     LCDMessage(LINE2_START_ADDR,"Seeker");    
+     ButtonAcknowledge(BUTTON0);   
      /* Queue the Channel Open messages and then go to wait state */ 
      AntOpenChannelNumber(ANT_CHANNEL_0); 
      AntOpenChannelNumber(ANT_CHANNEL_1);      
@@ -294,13 +292,14 @@ static void UserApp1SM_Idle(void)
     
 static void UserApp1SM_OpeningChannels(void) 
 { 
-   //static u16 u16time=0;
-   //static u16 u16timecounter=0;
-   /*for(u16time=0;u16time<10000;u16time++)
+   static u16 u16time=0;
+   static u16 u16timecounter=0;
+   for(u16time=0;u16time<10000;u16time++)
    {
      u16timecounter++;
-   }*/
-   /*if(u16time==10000)
+     LCDMessage(LINE1_START_ADDR,"time"); 
+   }
+   if(u16time==10000)
    {
      /* Ensure channel0 have opened */ 
      if((AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_OPEN)) 
@@ -331,7 +330,7 @@ static void UserApp1SM_OpeningChannels(void)
        LCDMessage(LINE1_START_ADDR, "Channel1 open failed"); 
        UserApp1_StateMachine = UserApp1SM_Error;     
      }  
-   //}
+   }
 } /* end UserApp1SM_OpeningChannels() */ 
 
 static void UserApp1SM_RadioActive(void) 
@@ -359,8 +358,9 @@ static void UserApp1SM_RadioActive(void)
        } 
        if(bNewData)
        {
-         LCDCommand(LCD_CLEAR_CMD);   
-         LCDMessage(LINE1_START_ADDR, au8DataContent);  
+         LCDCommand(LCD_CLEAR_CMD);  
+         LCDMessage(LINE1_START_ADDR,"Seeker");   
+         LCDMessage(LINE2_START_ADDR, au8DataContent);  
        }      
        u8TestMessage[7]++; 
        if(u8TestMessage[7] == 0) 
@@ -491,7 +491,7 @@ static void UserApp1SM_OpenMasterChannel(void)
      if((AntRadioStatusChannel(ANT_CHANNEL_2) == ANT_OPEN)) 
      { 
        LCDCommand(LCD_CLEAR_CMD); 
-       LCDMessage(LINE1_START_ADDR,"Channel2 open");     
+       LCDMessage(LINE1_START_ADDR,"hide");     
        UserApp1_StateMachine = UserApp1SM_MasterActive;     
      } 
      /* Check for timeout */ 
@@ -516,7 +516,8 @@ static void UserApp1SM_MasterActive(void)
   LedOff(BLUE); 
   LedOff(PURPLE); 
   LedOff(WHITE); 
-  PWMAudioOff(BUZZER1);
+  PWMAudioOff(BUZZER1); 
+  
   
   if( AntReadAppMessageBuffer() ) 
    { 
@@ -527,13 +528,14 @@ static void UserApp1SM_MasterActive(void)
        for(u8 i = 0; i < ANT_DATA_BYTES; i++) 
        { 
          u8MasterDataContent[2 * i]     = HexToASCIICharUpper(G_au8AntApiCurrentMessageBytes[i] / 16); 
-        u8MasterDataContent[2 * i + 1] = HexToASCIICharUpper(G_au8AntApiCurrentMessageBytes[i] % 16); 
+         u8MasterDataContent[2 * i + 1] = HexToASCIICharUpper(G_au8AntApiCurrentMessageBytes[i] % 16); 
        } 
        LCDMessage(LINE2_START_ADDR, u8MasterDataContent); 
-       if(G_au8AntApiCurrentMessageBytes[0]==0x02)
+       if(u8MasterDataContent[0]==0x02)
        {
-         UserApp1_StateMachine=UserApp1SM_Idle;
-       }     
+          LedOn(RED); 
+          UserApp1_StateMachine = UserApp1SM_Idle;  
+       } 
      } 
      else if(G_eAntApiCurrentMessageClass == ANT_TICK) 
      { 
@@ -546,8 +548,8 @@ static void UserApp1SM_MasterActive(void)
          { 
            u8MasterMessage[5]++; 
          } 
-       } 
-       AntQueueAcknowledgedMessage(ANT_CHANNEL_2, u8MasterMessage); 
+       }
+       AntQueueAcknowledgedMessage(ANT_CHANNEL_2, u8MasterMessage);
      } 
    } /* end AntReadData() */ 
 }
