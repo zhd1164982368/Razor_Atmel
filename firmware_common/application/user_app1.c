@@ -268,7 +268,10 @@ static void UserApp1SM_Idle(void)
   /* Write the one line of code to use the BUTTON API to check if BUTTON0 was pressed */  
    if(WasButtonPressed(BUTTON0)) 
    { 
-     ButtonAcknowledge(BUTTON0);   
+     ButtonAcknowledge(BUTTON0); 
+       LCDCommand(LCD_CLEAR_CMD); 
+       LCDMessage(LINE1_START_ADDR,"Ready or not?"); 
+       LCDMessage(LINE2_START_ADDR,"Here i come!");    
      /* Queue the Channel Open messages and then go to wait state */ 
      AntOpenChannelNumber(ANT_CHANNEL_0); 
      AntOpenChannelNumber(ANT_CHANNEL_1);      
@@ -293,20 +296,25 @@ static void UserApp1SM_Idle(void)
 static void UserApp1SM_OpeningChannels(void) 
 { 
    static u16 u16time=0;
-   static u16 u16timecounter=0;
-   for(u16time=0;u16time<10000;u16time++)
+   
+   if(u16time<=2000)
    {
-     u16timecounter++;
-     LCDMessage(LINE1_START_ADDR,"time"); 
+     u16time++;
+     //LCDCommand(LCD_CLEAR_CMD); 
+     //LCDMessage(LINE1_START_ADDR,"Seeker!"); 
+     LedOn(GREEN);
+     LedBlink(GREEN,LED_2HZ);
    }
-   if(u16time==10000)
+   else
    {
+     u16time=0;
      /* Ensure channel0 have opened */ 
      if((AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_OPEN)) 
      { 
-       LCDCommand(LCD_CLEAR_CMD); 
-       LCDMessage(LINE1_START_ADDR,"Ready or not?"); 
-       LCDMessage(LINE2_START_ADDR,"Here i come!");    
+       LedOff(GREEN);
+       //LCDCommand(LCD_CLEAR_CMD); 
+       //LCDMessage(LINE1_START_ADDR,"Ready or not?"); 
+       //LCDMessage(LINE2_START_ADDR,"Here i come!");  
        UserApp1_StateMachine = UserApp1SM_RadioActive;     
      } 
      /* Check for timeout */ 
@@ -320,7 +328,7 @@ static void UserApp1SM_OpeningChannels(void)
      if((AntRadioStatusChannel(ANT_CHANNEL_1) == ANT_OPEN)) 
      { 
        LCDCommand(LCD_CLEAR_CMD); 
-       LCDMessage(LINE1_START_ADDR,"Channel1 open");     
+       LCDMessage(LINE1_START_ADDR,"Channel1 open");    
        UserApp1_StateMachine = UserApp1SM_RadioActive;     
      } 
      /* Check for timeout */ 
@@ -329,7 +337,7 @@ static void UserApp1SM_OpeningChannels(void)
        LCDCommand(LCD_CLEAR_CMD); 
        LCDMessage(LINE1_START_ADDR, "Channel1 open failed"); 
        UserApp1_StateMachine = UserApp1SM_Error;     
-     }  
+     } 
    }
 } /* end UserApp1SM_OpeningChannels() */ 
 
@@ -341,6 +349,7 @@ static void UserApp1SM_RadioActive(void)
    static u8 au8LastAntData[ANT_APPLICATION_MESSAGE_BYTES] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
    static u8 au8DataContent[] = "xxxxxxxxxxxxxxxx";
    static bool bNewData=FALSE;
+   
    
    if( AntReadAppMessageBuffer() )
    {
@@ -457,7 +466,7 @@ static void UserApp1SM_RadioActive(void)
          LedOff(RED);
          PWMAudioOff(BUZZER1);
        }
-       if((s8RssiChannel0>=-60&&s8RssiChannel0<=-50)||(s8RssiChannel1>=-60&&s8RssiChannel1<=-50))
+       if((s8RssiChannel0>=-57&&s8RssiChannel0<=-50)||(s8RssiChannel1>=-57&&s8RssiChannel1<=-50))
        {
          LedOn(WHITE);
          LedOn(PURPLE);
@@ -507,16 +516,25 @@ static void UserApp1SM_OpenMasterChannel(void)
 static void UserApp1SM_MasterActive(void)
 {
   static u8 u8MasterMessage[]={0,0,0,0,0xA5,0,0,0};
+  static u16 u16timecounter=0;
   u8 u8MasterDataContent[]="xxxxxxxxxxxxxxxx";
-  LedOff(RED); 
-  LedOff(ORANGE); 
-  LedOff(YELLOW); 
-  LedOff(GREEN); 
-  LedOff(CYAN); 
-  LedOff(BLUE); 
-  LedOff(PURPLE); 
-  LedOff(WHITE); 
-  PWMAudioOff(BUZZER1); 
+  
+  if(u16timecounter<=3000)
+  {
+    u16timecounter++;
+  }
+  else
+  {
+    LedOff(RED); 
+    LedOff(ORANGE); 
+    LedOff(YELLOW); 
+    LedOff(GREEN); 
+    LedOff(CYAN); 
+    LedOff(BLUE); 
+    LedOff(PURPLE); 
+    LedOff(WHITE); 
+    PWMAudioOff(BUZZER1); 
+  }
   
   
   if( AntReadAppMessageBuffer() ) 
@@ -533,7 +551,7 @@ static void UserApp1SM_MasterActive(void)
        LCDMessage(LINE2_START_ADDR, u8MasterDataContent); 
        if(u8MasterDataContent[0]==0x02)
        {
-          LedOn(RED); 
+          u16timecounter=0;
           UserApp1_StateMachine = UserApp1SM_Idle;  
        } 
      } 
