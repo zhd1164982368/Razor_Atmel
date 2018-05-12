@@ -33,14 +33,14 @@ Search "####" for ANT Channel ID defaults
 /* Network number */
 #define ANT_NETWORK_NUMBER_BYTES  (u8)8
 #define ANT_DEFAULT_NETWORK_KEY   (u8)0
-#define N_0                       (u8)0         
-#define N_1                       (u8)0         
-#define N_2                       (u8)0         
-#define N_3                       (u8)0         
-#define N_4                       (u8)0         
-#define N_5                       (u8)0         
-#define N_6                       (u8)0         
-#define N_7                       (u8)0         
+#define N_0                       (u8)0xB9         
+#define N_1                       (u8)0xA5         
+#define N_2                       (u8)0x21         
+#define N_3                       (u8)0xFB         
+#define N_4                       (u8)0xBD         
+#define N_5                       (u8)0x72         
+#define N_6                       (u8)0xC3         
+#define N_7                       (u8)0x45         
 
 /* Symbols for bytes in messages to help readability */
 #define CH                        (u8)0         /* Channel */
@@ -204,10 +204,10 @@ typedef struct
 
 #define ANT_CHANNEL_PERIOD_DEC_DEFAULT    (u16)8192
 #define ANT_CHANNEL_PERIOD_HEX_DEFAULT    (u16)0x2000
-#define ANT_CHANNEL_PERIOD_HI_DEFAULT		  (u8)0x20
-#define ANT_CHANNEL_PERIOD_LO_DEFAULT		  (u8)0x00
+#define ANT_CHANNEL_PERIOD_HI_DEFAULT		  (u8)0x1F
+#define ANT_CHANNEL_PERIOD_LO_DEFAULT		  (u8)0x86
 
-#define ANT_FREQUENCY_DEFAULT						  (u8)55
+#define ANT_FREQUENCY_DEFAULT						  (u8)57
 #define ANT_TX_POWER_DEFAULT						  RADIO_TX_POWER_4DBM
 /* #### end of default channel configuration parameters ####*/
 
