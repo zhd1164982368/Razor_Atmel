@@ -63,7 +63,7 @@ static void UserApp1SM_AntChannelAssign(void);
  
 static void UserApp1SM_AntConfigureSlave(void);    
 static void UserApp1SM_OpeningChannel(void);  
-static void UserApp1SM_RadioActive(void);  
+static void UserApp1SM_RadioActive(void); 
 
 #endif /* __USER_APP1_H */
 
